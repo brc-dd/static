@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm i && sponsorkit --dir=."
+  },
+  "devDependencies": {
+    "sponsorkit": "latest"
+  },
+  "packageManager": "pnpm@8.6.5"
+}
