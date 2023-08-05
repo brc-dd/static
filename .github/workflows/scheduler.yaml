@@ -25,6 +25,9 @@ jobs:
         env:
           SPONSORKIT_GITHUB_TOKEN: ${{ secrets.SPONSORKIT_GITHUB_TOKEN }}
           SPONSORKIT_GITHUB_LOGIN: brc-dd
+          SPONSORKIT_OPENCOLLECTIVE_KEY: ${{ secrets.SPONSORKIT_OPENCOLLECTIVE_KEY }}
+          SPONSORKIT_OPENCOLLECTIVE_SLUG: brc-dd
+          SPONSORKIT_OPENCOLLECTIVE_TYPE: person
       - run: |
           git config --global user.name "Divyansh Singh"
           git config --global user.email "40380293+brc-dd@users.noreply.github.com"

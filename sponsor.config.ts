@@ -1,6 +1,14 @@
-import { defineConfig, presets } from 'sponsorkit'
+import { Sponsorship, defineConfig, presets } from 'sponsorkit'
 
 export default defineConfig({
+  onSponsorsReady(sponsors) {
+    sponsors.forEach((sponsor) => {
+      if (sponsor.isOneTime) {
+        sponsor.monthlyDollars = getMonthlyDollars(sponsor)
+      }
+    })
+    return sponsors
+  },
   tiers: [
     {
       title: 'Past Sponsors',
@@ -29,3 +37,28 @@ export default defineConfig({
     }
   ]
 })
+
+function getMonthlyDollars({ monthlyDollars, createdAt }: Sponsorship) {
+  if (monthlyDollars <= 0 || !createdAt) return -1
+  const monthlySplit: number[] = []
+
+  let left = monthlyDollars
+  while (left > 0) {
+    if (left > 100) {
+      monthlySplit.push(100)
+      left -= 100
+    } else if (left > 50) {
+      monthlySplit.push(50)
+      left -= 50
+    } else if (left > 10) {
+      monthlySplit.push(10)
+      left -= 10
+    } else if (left > 0) {
+      monthlySplit.push(left)
+      left = 0
+    }
+  }
+
+  const index = Math.floor((Date.now() - +new Date(createdAt)) / 2.628e9)
+  return monthlySplit[index] || -1
+}
