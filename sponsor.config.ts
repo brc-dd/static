@@ -23,16 +23,21 @@ export default defineConfig({
     {
       title: 'Sponsors',
       monthlyDollars: 10,
-      preset: presets.medium
+      preset: presets.base
     },
     {
       title: 'Silver Sponsors',
       monthlyDollars: 50,
-      preset: presets.large
+      preset: presets.medium
     },
     {
       title: 'Gold Sponsors',
       monthlyDollars: 100,
+      preset: presets.large
+    },
+    {
+      title: 'Platinum Sponsors',
+      monthlyDollars: 500,
       preset: presets.xl
     }
   ]
@@ -44,7 +49,10 @@ function getMonthlyDollars({ monthlyDollars, createdAt }: Sponsorship) {
 
   let left = monthlyDollars
   while (left > 0) {
-    if (left > 100) {
+    if (left > 500) {
+      monthlySplit.push(500)
+      left -= 500
+    } else if (left > 100) {
       monthlySplit.push(100)
       left -= 100
     } else if (left > 50) {
