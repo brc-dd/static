@@ -5,7 +5,8 @@
     "build": "pnpm i && sponsorkit --dir=."
   },
   "devDependencies": {
+    "normalize-url": "^8.0.1",
     "sponsorkit": "latest"
   },
-  "packageManager": "pnpm@8.6.12"
+  "packageManager": "pnpm@9.4.0"
 }
