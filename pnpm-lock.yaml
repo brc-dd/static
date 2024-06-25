@@ -8,12 +8,9 @@ importers:
 
   .:
     devDependencies:
-      normalize-url:
-        specifier: ^8.0.1
-        version: 8.0.1
       sponsorkit:
         specifier: latest
-        version: 0.14.5
+        version: 0.14.6
 
 packages:
 
@@ -615,8 +612,8 @@ packages:
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
 
-  sponsorkit@0.14.5:
-    resolution: {integrity: sha512-Gwo1dEbNDdsaZ/pwR8lN7e4HTq3Uoxuc/UiTdtrcjPVWDMIAAUYWy7Ma0ut8R3m5wOYslhtXVVyxj8miww5Q/Q==}
+  sponsorkit@0.14.6:
+    resolution: {integrity: sha512-rb2CUEvUbwdrUBDS0aus+7jvP1TL2Gt1+xQs3chJ7KdamIr86e0FlFA3hCJ76oyLOKsAoSvG/GdjGllHYAWb+Q==}
     hasBin: true
 
   string-width@4.2.3:
@@ -1133,13 +1130,14 @@ snapshots:
     dependencies:
       is-arrayish: 0.3.2
 
-  sponsorkit@0.14.5:
+  sponsorkit@0.14.6:
     dependencies:
       '@antfu/utils': 0.7.8
       consola: 3.2.3
       d3-hierarchy: 3.1.2
       dotenv: 16.4.5
       node-html-parser: 6.1.13
+      normalize-url: 8.0.1
       ofetch: 1.3.4
       p-limit: 5.0.0
       picocolors: 1.0.1

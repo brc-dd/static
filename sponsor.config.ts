@@ -1,4 +1,3 @@
-import normalizeUrl from 'normalize-url'
 import { Sponsorship, defineConfig, tierPresets as presets } from 'sponsorkit'
 
 export default defineConfig({
@@ -7,9 +6,6 @@ export default defineConfig({
       if (sponsor.isOneTime) {
         sponsor.monthlyDollars = getMonthlyDollars(sponsor)
       }
-      sponsor.sponsor.websiteUrl = sponsor.sponsor.websiteUrl
-        ? normalizeUrl(sponsor.sponsor.websiteUrl, { forceHttps: true })
-        : undefined
     })
     return sponsors
   },
