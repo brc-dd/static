@@ -1,14 +1,9 @@
-import { Sponsorship, defineConfig, tierPresets as presets } from 'sponsorkit'
+import { defineConfig, tierPresets as presets } from 'sponsorkit'
+
+const GB_LOGO = (y: number) => `\
+<a href="https://globalbrains.com/" class="sponsorkit-link" target="_blank" id="globalbrain"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 120 64" y="${y}" height="100"><rect width="120" height="64" x="-60" y="-32" fill="#fff" rx="5.76" ry="5.76" transform="translate(60 32)" vector-effect="non-scaling-stroke"/><path d="M51.5 33.32c-3.09 0-5.407-2.615-5.407-6.553 0-4.13 2.387-6.577 5.477-6.577 3.137 0 5.48 2.567 5.48 6.5-.002 4.183-2.39 6.63-5.55 6.63Zm-.025-10.777c-1.825 0-2.95 1.654-2.95 4.152 0 2.75 1.25 4.273 3.068 4.273 1.817 0 3.02-1.895 3.02-4.2 0-2.57-1.195-4.225-3.138-4.225Zm5.117 19.315v6.937h-2.484V36.192h2.485v1.465c.58-.84 1.782-1.465 3.037-1.465 1 0 1.64.193 2.148.528v2.352c-.85-.715-2.595-.81-3.545-.372-1.175.55-1.64 1.8-1.64 3.157Zm13.783 6.937v-1.25a5 5 0 0 1-3.475 1.513c-2.053 0-4.393-1.153-4.393-4.25 0-2.808 2.17-4.08 5.043-4.08a7.025 7.025 0 0 1 2.825.48v-.938c0-1.367-.845-2.135-2.39-2.135a8.465 8.465 0 0 0-4.25 1.2v-2.277c1.207-.75 2.538-1.13 4.323-1.13 2.824 0 4.75 1.37 4.75 4.225v8.642Zm0-5.377c-.675-.336-1.545-.553-2.898-.553-1.592 0-2.605.72-2.605 1.872 0 1.25.796 2.09 2.438 2.09a4 4 0 0 0 3.065-1.61Zm9.002-10.36v-1.25a5 5 0 0 1-3.474 1.5c-2.053 0-4.393-1.153-4.393-4.25C71.5 26.262 73.682 25 76.553 25a7.025 7.025 0 0 1 2.825.48v-.945c0-1.37-.846-2.137-2.39-2.137a8.463 8.463 0 0 0-4.25 1.202v-2.282c1.207-.75 2.537-1.128 4.322-1.128 2.825 0 4.75 1.367 4.75 4.225v8.643Zm0-5.378c-.674-.337-1.544-.553-2.897-.553-1.593 0-2.605.72-2.605 1.873 0 1.25.795 2.087 2.438 2.087a4 4 0 0 0 3.064-1.607ZM76 48.795v-8.84h2.5v8.84Zm1.263-9.845a1.598 1.598 0 1 1 1.592-1.585 1.608 1.608 0 0 1-1.593 1.585Zm-41.37-18.853v1.013a4.5 4.5 0 0 0-2.798-1.053c-2.657 0-5.095 2.083-5.095 6.49 0 4.898 2.215 6.905 4.972 6.905a4.578 4.578 0 0 0 2.913-1.12c-.087 3.443-1.18 3.976-4.44 5.153v2.58c4.305-1.565 6.932-2.447 6.932-7.667v-13.2Zm-5.358 6.375c0-2.717.985-4.087 2.808-4.087.987 0 1.914.552 2.55 1.155V30c-.648.617-1.5 1.117-2.453 1.117-1.87.008-2.905-1.412-2.905-4.645Zm34.55-6.282c-1.327 0-2.39.622-3.307 1.462V14.75l-2.463.89v17.418h2.463V31.88a4.513 4.513 0 0 0 3.185 1.44c2.632 0 5-2.04 5-6.36-.003-4.802-2.153-6.77-4.878-6.77Zm-.362 10.85c-1.25 0-2.415-.913-2.97-1.657v-5.305c.652-.815 1.69-1.608 2.872-1.608 1.835 0 2.848 1.393 2.848 4.56 0 2.665-.973 4.01-2.75 4.01Zm19.932-15.397v17.414h2.463V14.75l-2.463.893zm-37.528 20.28c-1.327 0-2.387.624-3.304 1.465v-4.33l-2.463.89V48.79h2.463v-1.178A4.5 4.5 0 0 0 47 49.055c2.63 0 5-2.042 5-6.363 0-4.802-2.145-6.77-4.873-6.77Zm-.36 10.85c-1.25 0-2.414-.913-2.97-1.656v-5.304c.653-.813 1.703-1.61 2.873-1.61 1.835 0 2.847 1.392 2.847 4.562 0 2.665-.965 4.008-2.75 4.008Zm-5.407-31.13V32.71l2.462-.892V14.75l-2.462.893zM92 41.57c0-3.723-1.567-5.642-4.513-5.642-1.304 0-2.56.552-3.187 1.465v-1.2h-2.485v12.602H84.3v-7.37c0-2.04.943-3.218 2.608-3.218 1.664 0 2.607.913 2.607 3.458v7.585l2.485-.9Z"/></svg></a>`
 
 export default defineConfig({
-  onSponsorsReady(sponsors) {
-    sponsors.forEach((sponsor) => {
-      if (sponsor.isOneTime) {
-        sponsor.monthlyDollars = getMonthlyDollars(sponsor)
-      }
-    })
-    return sponsors
-  },
   tiers: [
     {
       title: 'Past Sponsors',
@@ -39,34 +34,22 @@ export default defineConfig({
       title: 'Platinum Sponsors',
       monthlyDollars: 500,
       preset: presets.xl
+    },
+    {
+      title: 'Special Sponsors',
+      monthlyDollars: Infinity,
+      composeAfter(compose, _, config) {
+        if (config.filter?.({ monthlyDollars: Infinity } as any, []) !== false) {
+          compose
+            .addSpan(20)
+            .addText('Special Sponsor', 'sponsorkit-tier-title')
+            .addSpan(10)
+            .addRaw(GB_LOGO(compose.height))
+            .addSpan(130)
+        }
+      }
     }
-  ]
+  ],
+  prorateOnetime: true,
+  outputDir: '.'
 })
-
-function getMonthlyDollars({ monthlyDollars, createdAt }: Sponsorship) {
-  if (monthlyDollars <= 0 || !createdAt) return -1
-  const monthlySplit: number[] = []
-
-  let left = monthlyDollars
-  while (left > 0) {
-    if (left > 500) {
-      monthlySplit.push(500)
-      left -= 500
-    } else if (left > 100) {
-      monthlySplit.push(100)
-      left -= 100
-    } else if (left > 50) {
-      monthlySplit.push(50)
-      left -= 50
-    } else if (left > 10) {
-      monthlySplit.push(10)
-      left -= 10
-    } else if (left > 0) {
-      monthlySplit.push(left)
-      left = 0
-    }
-  }
-
-  const index = Math.floor((Date.now() - +new Date(createdAt)) / 2.628e9)
-  return monthlySplit[index] || -1
-}
