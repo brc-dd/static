@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "sponsorkit": "^18.0.0"
+    "sponsorkit": "^19.0.0"
   },
-  "packageManager": "pnpm@12.5.1"
+  "packageManager": "pnpm@12.18.0"
 }
