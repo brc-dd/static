@@ -2,6 +2,8 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@tsconfig/bases": "^1.0.28",
+    "@types/node": "^26.6.6",
     "sponsorkit": "^19.0.0"
   },
   "packageManager": "pnpm@12.18.0"

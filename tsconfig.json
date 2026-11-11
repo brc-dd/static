@@ -1,0 +1,1 @@
+{ "extends": ["@tsconfig/bases/node-lts", "@tsconfig/bases/node-ts", "@tsconfig/bases/strictest"] }

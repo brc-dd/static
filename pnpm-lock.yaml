@@ -166,9 +166,15 @@ importers:
 
   .:
     devDependencies:
+      '@tsconfig/bases':
+        specifier: ^1.0.28
+        version: 1.0.28
+      '@types/node':
+        specifier: ^26.6.6
+        version: 26.6.6
       sponsorkit:
         specifier: ^19.0.0
-        version: 19.0.0
+        version: 19.0.0(@types/node@26.6.6)
 
 packages:
 
@@ -340,6 +346,12 @@ packages:
   '@quansync/fs@1.1.0':
     resolution: {integrity: sha512-qAPG/t3HqML1TlN7sY/pTbEjzFVAKsMjNNMGheyDosro+kT4iw2KCUoHcVdmliwWjorm4elZbgNQyU2eD97eDg==}
 
+  '@tsconfig/bases@1.0.28':
+    resolution: {integrity: sha512-l326opM2+2gDiv3fYIzy12IeUJkHwNbt9pI+Ww2Byk4D1AfJt+CJmbiIxXtWaxY06514pAO5YXBneufph9WKFQ==}
+
+  '@types/node@26.6.6':
+    resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
+
   ansis@4.5.0:
     resolution: {integrity: sha512-KwIVkfFfJSSzBmZhDGuTmkhWqTdyB5oNVzzznBJbBZ5bZtHiqSrcugRF0RKJKT4Ss3d7ZrcjnlFVDlQNmtWfWw==}
     engines: {node: '>=14'}
@@ -417,6 +429,9 @@ packages:
 
   unconfig@7.5.0:
     resolution: {integrity: sha512-oi8Qy2JV4D3UQ0PsopR28CzdQ3S/5A1zwsUwp/rosSbfhJ5z7b90bIyTwi/F7hCLD4SGcZVjDzd4XoUQcEanvA==}
+
+  undici-types@8.9.0:
+    resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
   yocto-queue@1.2.2:
     resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
@@ -539,6 +554,12 @@ snapshots:
     dependencies:
       quansync: 1.0.0
 
+  '@tsconfig/bases@1.0.28': {}
+
+  '@types/node@26.6.6':
+    dependencies:
+      undici-types: 8.9.0
+
   ansis@4.5.0: {}
 
   cac@7.1.0: {}
@@ -573,7 +594,7 @@ snapshots:
 
   semver@7.8.6: {}
 
-  sharp@0.35.5:
+  sharp@0.35.5(@types/node@26.6.6):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -604,8 +625,9 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.5
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
+      '@types/node': 26.6.6
 
-  sponsorkit@19.0.0:
+  sponsorkit@19.0.0(@types/node@26.6.6):
     dependencies:
       ansis: 4.5.0
       cac: 7.1.0
@@ -614,7 +636,7 @@ snapshots:
       normalize-url: 10.0.0
       ofetch: 1.5.1
       p-limit: 7.3.3
-      sharp: 0.35.5
+      sharp: 0.35.5(@types/node@26.6.6)
       unconfig: 7.5.0
     transitivePeerDependencies:
       - '@types/node'
@@ -636,5 +658,7 @@ snapshots:
       jiti: 2.7.0
       quansync: 1.0.0
       unconfig-core: 7.5.0
+
+  undici-types@8.9.0: {}
 
   yocto-queue@1.2.2: {}
