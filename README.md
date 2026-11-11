@@ -11,3 +11,7 @@ Generates and stores the sponsors images. Add it to `README.md` with:
   </a>
 </p>
 ```
+
+## Sponsors
+
+![brc-dd's sponsors](./sponsors.svg)
