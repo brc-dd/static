@@ -2,9 +2,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@tsconfig/bases": "^1.0.28",
+    "@tsconfig/bases": "^1.0.30",
     "@types/node": "^26.6.6",
     "sponsorkit": "^19.0.0"
   },
-  "packageManager": "pnpm@12.18.0"
+  "packageManager": "pnpm@12.23.0"
 }
