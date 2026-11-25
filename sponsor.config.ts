@@ -1,6 +1,7 @@
 import { defineConfig } from 'sponsorkit'
 import { type GridTier, gridComposer, manualSponsor, replaceLogo } from './renderer.ts'
-import { addLifetimeTotals } from './totals.ts'
+import { thanksDev, withoutThanksDevPool } from './thanksdev.ts'
+import { addLifetimeTotals, withoutTotalsBelow } from './totals.ts'
 
 // `span` is how many grid cells a tile takes per side (1, 2 or 4). `color` is the ring around it:
 // one colour, or a pair it fades between. These pairs are Radix Colors steps, light to dark.
@@ -23,7 +24,13 @@ export default defineConfig({
     marker: 'ring',
     pitch: 40,
   }),
-  onSponsorsAllFetched: addLifetimeTotals, // what each sponsor has paid in all, which orders a tier
+  // thanks.dev is not built into sponsorkit, so the providers are listed rather than detected
+  providers: ['github', 'opencollective', thanksDev],
+  async onSponsorsAllFetched(sponsors) {
+    await addLifetimeTotals(sponsors) // what each sponsor has paid in all, which orders a tier
+    sponsors = withoutTotalsBelow(sponsors, 1) // under a dollar in all is left out, whatever the source
+    return withoutThanksDevPool(sponsors) // its donors are listed themselves
+  },
   async onSponsorsReady(sponsors) {
     await replaceLogo(sponsors, 'vuejs', {
       avatarUrl: 'https://raw.githubusercontent.com/vuejs/art/master/logo.svg',
