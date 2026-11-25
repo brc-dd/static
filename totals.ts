@@ -54,8 +54,9 @@ interface GitHubActivity {
  *
  * GitHub has exact lifetime values, but blanks them for a token with just the `read:user` and
  * `read:org` scopes sponsorkit asks for. So this replays the sponsorship activity log instead: a
- * one-time payment counts once, and a monthly tier counts for as long as it ran, across
- * cancellations and restarts. Refunds are not subtracted, so read it as a close estimate.
+ * one-time payment counts once, a monthly tier that has ended counts for as long as it ran, and
+ * one still running counts every month it has started, because GitHub charges up front. Refunds
+ * are not subtracted, so read it as a close estimate.
  */
 async function githubTotals() {
   const login = env('SPONSORKIT_GITHUB_LOGIN')
@@ -111,9 +112,9 @@ async function githubTotals() {
     cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null
   } while (cursor)
 
-  // whatever is still running has been paid up to now
-  for (const sponsor of [...running.keys()])
-    settle(sponsor, Date.now())
+  // whatever is still running has paid for each month it has started, the first one on day one
+  for (const [sponsor, tier] of running)
+    add(sponsor, tier.cents * (Math.floor((Date.now() - tier.since) / MONTH) + 1))
   return totals
 }
 
@@ -173,4 +174,12 @@ export async function addLifetimeTotals(sponsors: SponsorshipWithTotal[]) {
         ship.totalDollars = Math.round(cents) / 100
     }
   }
+}
+
+/**
+ * Leave out sponsors who have paid less than `minimum` dollars in all, whatever the source.
+ * A sponsor with no known total stays.
+ */
+export function withoutTotalsBelow(sponsors: SponsorshipWithTotal[], minimum: number) {
+  return sponsors.filter(ship => ship.totalDollars === undefined || ship.totalDollars >= minimum)
 }
