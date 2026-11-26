@@ -1,9 +1,7 @@
-# static
-
 Generates and stores the sponsors images. Add it to `README.md` with:
 
 ```md
-## Sponsors
+<h2 align="center">Sponsors</h2>
 
 <p align="center">
   <a href="https://cdn.jsdelivr.net/gh/brc-dd/static/sponsors.svg">
@@ -12,6 +10,10 @@ Generates and stores the sponsors images. Add it to `README.md` with:
 </p>
 ```
 
-## Sponsors
+<h2 align="center">Sponsors</h2>
 
-![brc-dd's sponsors](./sponsors.svg)
+<p align="center">
+  <a href="./sponsors.svg">
+    <img alt="brc-dd's sponsors" src="./sponsors.svg" />
+  </a>
+</p>
