@@ -50,9 +50,10 @@ export default defineConfig({
         type: 'Organization',
         login: 'vite-ecosystem-fund',
         name: 'Vite Ecosystem Fund',
-        avatarUrl: 'https://images.opencollective.com/vite-ecosystem-fund/logo/460.png',
+        avatarUrl: 'https://raw.githubusercontent.com/cloudflare/cloudflare-docs/production/public/logo.svg',
         linkUrl: 'https://opencollective.com/cloudflare/projects/vite-ecosystem-fund',
         logoScale: 0.78, // the cloud runs edge to edge, so shrink it to sit inside the tile
+        logoOffset: [0, -0.03], // a little above the middle, where a flat-bottomed shape looks centred
       }, 500),
     ])
     return [...manual, ...sponsors]
