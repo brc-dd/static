@@ -72,9 +72,11 @@ const mutedStyles = {
 export interface GridOptions {
   /**
    * Width of the image in px. It stays the same however many sponsors there are,
-   * and the grid is centred in it.
+   * and the rows are centred in it.
    *
-   * @default sponsorkit's `width`, which is 800 unless `--width` is passed
+   * With `columns`, it defaults to just wide enough for a full row, so the space at the sides
+   * equals `padding`. Otherwise it defaults to sponsorkit's `width`, which is 800 unless
+   * `--width` is passed.
    */
   width?: number
   /**
@@ -115,7 +117,7 @@ export interface GridOptions {
    */
   past?: keyof typeof mutedStyles | MutedStyle
   /**
-   * Blank space above and below the grid in px, and the least kept at its sides.
+   * Blank space around the grid in px: above and below it, and the least kept at its sides.
    *
    * @default 2
    */
@@ -213,10 +215,12 @@ export function gridComposer(options: GridOptions = {}) {
       .flatMap(({ tier, sponsors }) => sponsors
         .sort((a, b) => compareStanding(a, b) || (listed.get(a) ?? 0) - (listed.get(b) ?? 0))
         .map(({ sponsor }) => ({ sponsor, tier: tier as GridTier, span: (tier as GridTier).span ?? 1 })))
-    const width = options.width ?? composer.config.width
+    // with a set row width the image is just wide enough for a full row, so no space is left at
+    // its sides; otherwise the row width depends on the list, and the image keeps the width given
+    const width = options.width ?? (columns ? columns * pitch - gap + padding * 2 : composer.config.width)
     const maxCols = Math.floor((width - padding * 2 + gap) / pitch)
     const rows = intoRows(tiles, columns ?? chooseColumns(tiles, maxCols, pitch, gap))
-    // the image keeps its width, and every row is centred in it, full or not
+    // every row is centred in the image, full or not
     let bottom = padding
     const placed = rows.flatMap((row) => {
       const left = Math.round((width - (row.tiles.length * row.span * pitch - gap)) / 2)
