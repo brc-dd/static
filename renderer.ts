@@ -6,9 +6,9 @@ import { partitionTiers, resizeImage, svgToWebp } from 'sponsorkit'
 /**
  * Grid renderer for sponsorkit.
  *
- * Every sponsor is a tile on one shared lattice, with no labels and no names. A tier picks how
- * many cells its tiles span and, optionally, a colour. Tiles are packed in tier order, and the
- * column count is chosen so the block comes out as a full rectangle: only the last row runs short.
+ * Every sponsor is a tile, with no labels and no names. A tier picks how big its tiles are and,
+ * optionally, a colour. Tiles flow in rows in tier order. A change of tile size starts a new row,
+ * so big and small tiles never share one, and a row that is not full is centred.
  */
 
 export interface GridTier extends Tier {
@@ -66,6 +66,7 @@ const mutedStyles = {
   smaller: { saturate: 0.35, opacity: 0.75, scale: 0.75 },
   faded: { saturate: 1, opacity: 0.5, scale: 1 },
   grey: { saturate: 0, opacity: 0.6, scale: 1 },
+  none: { saturate: 1, opacity: 1, scale: 1 },
 } satisfies Record<string, Required<MutedStyle>>
 
 export interface GridOptions {
@@ -89,7 +90,10 @@ export interface GridOptions {
    * @default 8
    */
   gap?: number
-  /** Use exactly this many columns instead of choosing a count that fits the list. */
+  /**
+   * Make rows this many cells wide instead of choosing a width that fits the list.
+   * A tile takes as many cells as its tier's `span`.
+   */
   columns?: number
   /**
    * Corner radius: `'round'` for circles, or a number of px applied to every tile whatever its size.
@@ -104,7 +108,8 @@ export interface GridOptions {
    */
   marker?: 'ring' | 'frame' | 'none'
   /**
-   * How `muted` tiers are toned down: a preset, or your own values.
+   * How `muted` tiers are toned down: a preset, your own values, or `'none'` to draw them
+   * like everyone else.
    *
    * @default 'soft'
    */
@@ -121,52 +126,41 @@ const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').rep
 const n = (v: number) => +v.toFixed(2)
 
 /**
- * Place square tiles on a grid `cols` wide, first fit in reading order, and return each with its cell.
- * A tile of span s only starts on multiples of s, so small tiles always nest cleanly beside big ones.
+ * Break tiles into rows at most `cols` cells wide, keeping their order. A change of tile size
+ * always starts a new row, so big and small tiles never share one.
  */
-function pack<T extends { span: number }>(tiles: T[], cols: number) {
-  const grid: Uint8Array[] = []
-  const cells = (r: number) => grid[r] ??= new Uint8Array(cols)
-  const from: Record<number, number> = {}
-  const placed: (T & { col: number, row: number })[] = []
+function intoRows<T extends { span: number }>(tiles: T[], cols: number) {
+  const rows: { span: number, tiles: T[] }[] = []
   for (const tile of tiles) {
-    const s = tile.span
-    for (let r = from[s] ?? 0, done = false; !done; r += s) {
-      for (let c = 0; c + s <= cols && !done; c += s) {
-        let free = true
-        for (let i = 0; i < s && free; i++) {
-          for (let j = 0; j < s && free; j++)
-            free = !cells(r + i)[c + j]
-        }
-        if (!free)
-          continue
-        for (let i = 0; i < s; i++)
-          cells(r + i).fill(1, c, c + s)
-        placed.push({ ...tile, col: c, row: r })
-        from[s] = r
-        done = true
-      }
-    }
+    const row = rows.at(-1)
+    if (row && row.span === tile.span && (row.tiles.length + 1) * tile.span <= cols)
+      row.tiles.push(tile)
+    else
+      rows.push({ span: tile.span, tiles: [tile] })
   }
-  return { placed, rows: grid.length }
+  return rows
 }
 
-/** Pick the column count whose packing wastes the fewest cells, leaning towards a wide, README-shaped block. */
+/** Pick the row width, in cells, that leaves the fewest cells empty, leaning towards a wide, README-shaped block. */
 function chooseColumns(tiles: { span: number }[], maxCols: number, pitch: number, gap: number) {
-  const widest = Math.max(2, ...tiles.map(tile => tile.span))
+  // full rows of every size come out equally wide when the width is a multiple of the largest tile
+  const step = Math.max(1, ...tiles.map(tile => tile.span))
   const used = tiles.reduce((sum, tile) => sum + tile.span * tile.span, 0)
+  const heightAt = (cols: number) => intoRows(tiles, cols).reduce((sum, row) => sum + row.span, 0)
+  // the widest rows that fit give the shortest block
+  const shortest = heightAt(Math.max(step, Math.floor(maxCols / step) * step))
   let best: { cols: number, score: number } | undefined
-  for (let cols = widest; cols <= maxCols; cols += 2) {
-    const { rows } = pack(tiles, cols)
-    const ratio = (cols * pitch - gap) / (rows * pitch - gap)
-    // skip tall, narrow blocks while there is still room to widen
-    if (ratio < 1.4 && cols + 2 <= maxCols)
+  for (let cols = step; cols <= maxCols; cols += step) {
+    const height = heightAt(cols)
+    const ratio = (cols * pitch - gap) / (height * pitch - gap)
+    // skip tall, narrow blocks that wider rows would make shorter
+    if (ratio < 1.4 && height > shortest)
       continue
-    const score = (cols * rows - used) / (cols * rows) * 10 + Math.abs(Math.log(ratio / 3))
+    const score = (cols * height - used) / (cols * height) * 10 + Math.abs(Math.log(ratio / 3))
     if (!best || score < best.score)
       best = { cols, score }
   }
-  return best?.cols ?? widest
+  return best?.cols ?? step
 }
 
 /**
@@ -220,11 +214,16 @@ export function gridComposer(options: GridOptions = {}) {
         .sort((a, b) => compareStanding(a, b) || (listed.get(a) ?? 0) - (listed.get(b) ?? 0))
         .map(({ sponsor }) => ({ sponsor, tier: tier as GridTier, span: (tier as GridTier).span ?? 1 })))
     const width = options.width ?? composer.config.width
-    const maxCols = Math.max(2, Math.floor((width - padding * 2 + gap) / pitch / 2) * 2)
-    const { placed, rows } = pack(tiles, columns ?? chooseColumns(tiles, maxCols, pitch, gap))
-    // the image keeps its width, so centre the grid on the columns it actually uses
-    const cols = Math.max(0, ...placed.map(tile => tile.col + tile.span))
-    const left = Math.round((width - (cols * pitch - gap)) / 2)
+    const maxCols = Math.floor((width - padding * 2 + gap) / pitch)
+    const rows = intoRows(tiles, columns ?? chooseColumns(tiles, maxCols, pitch, gap))
+    // the image keeps its width, and every row is centred in it, full or not
+    let bottom = padding
+    const placed = rows.flatMap((row) => {
+      const left = Math.round((width - (row.tiles.length * row.span * pitch - gap)) / 2)
+      const top = bottom
+      bottom += row.span * pitch
+      return row.tiles.map((tile, i) => ({ ...tile, cx: left + i * row.span * pitch, cy: top }))
+    })
 
     const clips = new Map<string, number>()
     // a colour pair is painted through a gradient, defined once however many tiles share it
@@ -237,10 +236,8 @@ export function gridComposer(options: GridOptions = {}) {
       gradients.set(stops, id)
       return `url(#${id})`
     }
-    const drawn = await Promise.all(placed.map(async ({ sponsor, tier, span, col, row }) => {
+    const drawn = await Promise.all(placed.map(async ({ sponsor, tier, span, cx, cy }) => {
       const cell = span * pitch - gap
-      const cx = left + col * pitch
-      const cy = padding + row * pitch
       const color = marker !== 'none' && tier.color ? paint(tier.color) : undefined
       const line = span > 2 ? 3 : 2
       // a ring sits on the cell edge, so the picture steps in to leave room for it
@@ -281,11 +278,13 @@ export function gridComposer(options: GridOptions = {}) {
       return { svg, muted: !!tier.muted }
     }))
 
-    const live = drawn.filter(tile => !tile.muted).map(tile => tile.svg)
-    const muted = drawn.filter(tile => tile.muted).map(tile => tile.svg)
     const fade = tone.saturate < 1
       ? `<filter id="fade" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="${tone.saturate}"/></filter>`
       : ''
+    // with nothing to tone down, muted tiers are drawn with everyone else
+    const toned = fade !== '' || tone.opacity < 1
+    const live = drawn.filter(tile => !(toned && tile.muted)).map(tile => tile.svg)
+    const muted = drawn.filter(tile => toned && tile.muted).map(tile => tile.svg)
     const defs = [
       ...Array.from(clips, ([id, r]) => `<clipPath id="${id}" clipPathUnits="objectBoundingBox"><rect width="1" height="1" rx="${r}"/></clipPath>`),
       ...Array.from(gradients, ([stops, id]) => `<linearGradient id="${id}" x2="1" y2="1">${stops}</linearGradient>`),
@@ -298,7 +297,7 @@ export function gridComposer(options: GridOptions = {}) {
 
     // sponsorkit sizes the SVG from these: the width is fixed, the height follows the rows
     composer.config.width = width
-    composer.height = Math.max(1, rows * pitch - gap + padding * 2)
+    composer.height = Math.max(1, bottom - gap + padding)
     composer.config.svgInlineCSS = '.edge{fill:none;stroke:#8b949e;stroke-opacity:.32}a{cursor:pointer}'
   }
 }

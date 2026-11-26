@@ -20,9 +20,10 @@ export default defineConfig({
   tiers,
   customComposer: gridComposer({
     radius: 'round',
-    past: 'soft',
+    past: 'none',
     marker: 'ring',
     pitch: 40,
+    columns: 12, // a row holds 6 big tiles or 12 small ones, however many there are
   }),
   // thanks.dev is not built into sponsorkit, so the providers are listed rather than detected
   providers: ['github', 'opencollective', thanksDev],
