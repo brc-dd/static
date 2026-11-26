@@ -60,5 +60,6 @@ export default defineConfig({
     return [...manual, ...sponsors]
   },
   prorateOnetime: true,
+  formats: ['json', 'svg'], // no PNG: nothing uses it
   outputDir: '.',
 })
